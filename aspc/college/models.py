@@ -114,12 +114,6 @@ class TermManager(models.Manager):
 class Term(models.Model):
     """Representing an academic term (e.g. Fall 2012)"""
     
-    TERM_TYPES = (
-        "fall",
-        "spring",
-        "summer",
-    )
-    
     start = models.DateField()
     end = models.DateField()
     
