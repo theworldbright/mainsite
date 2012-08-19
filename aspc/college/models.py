@@ -30,6 +30,32 @@ def _gen_termspecs(config=settings.ACADEMIC_TERM_DEFAULTS):
     return termspecs
 
 class TermManager(models.Manager):
+    def previous_term(self):
+        """
+        Retrieve (or create if missing) the previous academic term
+        """
+        
+        termspecs = _gen_termspecs()
+        termspecs.reverse() # we want the furthest future dates first
+        
+        today = date.today()
+        
+        for begin, end, name in termspecs:
+            if end <= today:
+                prev_begin, prev_end = begin, end
+                break
+        
+        try:
+            prev_term = self.get_query_set().get(
+                start__gte=prev_begin,
+                end__lte=prev_end
+            )
+        except self.model.DoesNotExist:
+            prev_term = self.model(start=prev_begin, end=prev_end)
+            prev_term.save()
+        
+        return prev_term
+    
     def current_term(self):
         """
         Retrieve (or create if missing) the current academic term (n.b. this 
