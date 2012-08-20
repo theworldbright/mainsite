@@ -223,6 +223,20 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
 
+# College Terms
+
+ACADEMIC_TERM_DEFAULTS = {
+  # Not the real start and end dates. Since those change year to year
+  # this just provides defaults for prepopulating terms. Because of the way
+  # current_term is calculated from these, it's better to have wider ranges.
+  
+  # Syntax:
+  # term name: ((begin month, begin day), (end month, end day))
+  
+  'fall': ((8, 24), (12, 22)),
+  'spring': ((1,10), (5, 25)),
+}
+
 #### Celery Configuration
 
 from celery.schedules import crontab
@@ -243,20 +257,42 @@ CELERYBEAT_SCHEDULE = {
         # but it's usually done by 20 after the hour
         "schedule": crontab(hour="*", minute=20), 
     },
+    "sagebooks-summer-reminder-emails": {
+        # Sent just after spring semester ends to renew listings made in the
+        # spring
+        "task": "aspc.sagelist.tasks.dispatch_reminder_emails",
+        "schedule": crontab(
+            month_of_year=ACADEMIC_TERM_DEFAULTS['spring'][1][0],
+            day_of_month=ACADEMIC_TERM_DEFAULTS['spring'][1][1],
+        ),
+    },
+    "sagebooks-summer-followup-emails": {
+        # Sent just before fall semester starts to renew listings made in the
+        # spring semester
+        "task": "aspc.sagelist.tasks.dispatch_followup_emails",
+        "schedule": crontab(
+            month_of_year=ACADEMIC_TERM_DEFAULTS['fall'][0][0],
+            day_of_month=ACADEMIC_TERM_DEFAULTS['fall'][0][1],
+        ),
+    },
+    "sagebooks-winter-reminder-emails": {
+        # Sent just after fall semester ends to renew listings made in the
+        # fall
+        "task": "aspc.sagelist.tasks.dispatch_reminder_emails",
+        "schedule": crontab(
+            month_of_year=ACADEMIC_TERM_DEFAULTS['fall'][1][0],
+            day_of_month=ACADEMIC_TERM_DEFAULTS['fall'][1][1],
+        ),
+    },
+    "sagebooks-winter-followup-emails": {
+        # Sent just before spring semester starts to renew listings made in the
+        # fall semester
+        "task": "aspc.sagelist.tasks.dispatch_followup_emails",
+        "schedule": crontab(
+            month_of_year=ACADEMIC_TERM_DEFAULTS['spring'][0][0],
+            day_of_month=ACADEMIC_TERM_DEFAULTS['spring'][0][1],
+        ),
+    },
 }
 
 djcelery.setup_loader()
-
-# College Terms
-
-ACADEMIC_TERM_DEFAULTS = {
-  # Not the real start and end dates. Since those change year to year
-  # this just provides defaults for prepopulating terms. Because of the way
-  # current_term is calculated from these, it's better to have wider ranges.
-  
-  # Syntax:
-  # term name: ((begin month, begin day), (end month, end day))
-  
-  'fall': ((8, 1), (12, 22)),
-  'spring': ((1,10), (5, 25)),
-}

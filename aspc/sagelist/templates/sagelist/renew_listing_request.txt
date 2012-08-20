@@ -1,0 +1,15 @@
+Hi {{ seller.name }}
+
+Renew your SageBooks listing for {{ booksale.title }} with a single click!
+This semester is ending, but you can renew your listing for another semester
+just by clicking the link below.
+
+{{ protocol }}://{{ domain }}{% url "sagelist_renew" pk=booksale.pk,token=booksale.token %}
+
+If you want to go ahead and delete the listing now, you can visit the listing
+page using the link below and click "Delete this listing".
+
+{{ protocol }}://{{ domain }}{{ booksale.get_absolute_url }}
+
+SageBooks
+ASPC System

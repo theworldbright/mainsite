@@ -1,10 +1,17 @@
 Hi {{ seller.name }}
 
 You have just listed {{ booksale.title|safe }} by {{ booksale.authors|safe }} for 
-${{ booksale.price }}. If you need to get to the listing (for example,
-to delete it if you sell the book somewhere else), you can get to it here:
+${{ booksale.price }}. When someone buys your book, you will both get an email
+from the service.
+
+If you sell the book elsewhere, or for some other reason have to remove
+your listing, just visit the listing page at the link below and choose
+"Delete this listing".
 
 {{ protocol }}://{{ domain }}{{ booksale.get_absolute_url }}
+
+If your book is not bought by the end of the semester, you will get an email
+with a link to renew your listing for another semester with a single click.
 
 SageBooks
 ASPC System

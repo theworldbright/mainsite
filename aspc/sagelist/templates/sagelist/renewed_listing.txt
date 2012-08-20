@@ -1,0 +1,14 @@
+Hi {{ seller.name }}
+
+You have just renewed your listing of {{ booksale.title|safe }} by 
+{{ booksale.authors|safe }} for ${{ booksale.price }}. If you need to get to 
+the listing (for example, to delete it if you sell the book somewhere else), 
+you can get to it here:
+
+{{ protocol }}://{{ domain }}{{ booksale.get_absolute_url }}
+
+If your book is not bought by the end of the semester, you will get an email
+with a link to renew your listing for another semester.
+
+SageBooks
+ASPC System

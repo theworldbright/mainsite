@@ -1,0 +1,16 @@
+Hi {{ seller.name }},
+
+Renew your SageBooks listing for {{ booksale.title }} with a single click!
+Your listing is about to expire, but you can renew it for another semester
+just by clicking the link below.
+
+{{ protocol }}://{{ domain }}{% url "sagelist_renew" pk=booksale.pk,token=booksale.token %}
+
+If you do not wish to renew it, ignore this message and the listing will
+expire automatically. Alternatively, you can delete the listing with the link
+below. (Either way, you will not get another email about this listing!)
+
+{{ protocol }}://{{ domain }}{{ booksale.get_absolute_url }}
+
+SageBooks
+ASPC System
