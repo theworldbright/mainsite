@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404
 from aspc.sagelist.models import BookSale
 from functools import wraps
 import string
+import datetime
 from pprint import pprint
 
 class BookSaleForm(forms.ModelForm):
@@ -24,6 +25,23 @@ class BookSaleForm(forms.ModelForm):
 
 class BookSearchForm(forms.Form):
     search = forms.CharField(initial="search")
+
+def renew_sale(request, pk, token):
+    sale = get_object_or_404(BookSale, pk=pk, token=token)
+    sale.token = None
+    sale.last_renewed = datetime.datetime.now()
+    sale.save()
+    sale.seller.email_user(
+        u"Renewed {0} on SageBooks".format(sale.title),
+        render_to_string(
+            'sagelist/renewed_listing.txt',
+            {'seller': sale.seller, 'booksale': sale,},
+            context_instance=RequestContext(self.request)
+        )
+    )
+    messages.add_message(request, messages.SUCCESS, u"Renewed listing for {0}".format(sale.title))
+    return HttpResponseRedirect(reverse('sagelist_detail', (),
+        {'pk': sale.pk,}))
 
 class CreateBookSaleView(CreateView):
     form_class = BookSaleForm
