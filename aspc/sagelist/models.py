@@ -20,6 +20,9 @@ class BookSale(models.Model):
     buyer = models.ForeignKey(User, null=True, blank=True, related_name="book_purchases_set")
     
     posted = models.DateTimeField(auto_now_add=True)
+    last_renewed = models.DateTimeField(auto_now_add=True)
+    token = models.CharField(max_length=20, null=True, blank=True, verbose_name="Renewal Token")
+    expired = models.BooleanField()
     
     class Meta:
         ordering = ['posted']
