@@ -84,6 +84,12 @@ class TermManager(models.Manager):
         
         return current_term
     
+    # Because the way terms are specified can mean that 'current term' isn't
+    # well defined for every date, the function defaults to the last active
+    # term. In some places it makes code easier to understand if the name
+    # 'current term' isn't used (i.e. scheduled tasks that run between terms)
+    last_active_term = current_term
+    
     def next_term(self):
         """ Retrieve (or create if missing) the next academic term """
         
