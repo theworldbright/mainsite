@@ -16,6 +16,8 @@ def send_renew_reminder(booksale_id, template):
     try:
         booksale = BookSale.objects.get(pk=booksale_id)
     except BookSale.DoesNotExist:
+        logger.warn("BookSale with id = {0} does not exist "
+                    "in db, can't send reminder".format(booksale_id))
         return
     
     email_context = {'seller': booksale.seller, 'booksale': booksale,}
@@ -35,7 +37,7 @@ def dispatch_reminder_emails():
     logger = dispatch_reminder_emails.get_logger()
     expiring = BookSale.objects.filter(expired=False, buyer__isnull=True,
         last_renewed__lt=Term.objects.last_active_term().end)
-    logger.info("Sending reminders for {0} sales...".format(expiring.count())
+    logger.info("Sending reminders for {0} sales...".format(expiring.count()))
     
     # Spawn reminder email tasks
     for booksale in expiring:
@@ -47,7 +49,7 @@ def dispatch_followup_emails():
     logger = dispatch_followup_emails.get_logger()
     expiring = BookSale.objects.filter(expired=False, buyer__isnull=True,
         last_renewed__lt=Term.objects.last_active_term().end)
-    logger.info("Sending reminders for {0} booksales...".format(expiring.count())
+    logger.info("Sending reminders for {0} booksales...".format(expiring.count()))
     
     # Spawn reminder email tasks
     for booksale in expiring:
