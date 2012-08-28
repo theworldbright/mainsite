@@ -1,5 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
+from aspc.college.models import Term
+
+class BookSaleManager(models.Manager):
+    def expiring(self):
+        return self.filter(expired=False, buyer__isnull=True,
+            last_renewed__lt=Term.objects.last_active_term().end)
+    
+    def expired(self):
+        return self.filter(expired=True)
+    
+    def active(self):
+        return self.filter(expired=False, buyer__isnull=True)
 
 class BookSale(models.Model):
     CONDITIONS = (
@@ -23,6 +35,8 @@ class BookSale(models.Model):
     last_renewed = models.DateTimeField(auto_now_add=True)
     token = models.CharField(max_length=20, null=True, blank=True, verbose_name="Renewal Token")
     expired = models.BooleanField()
+    
+    objects = BookSaleManager()
     
     class Meta:
         ordering = ['posted']

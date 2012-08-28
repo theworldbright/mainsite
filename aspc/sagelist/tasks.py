@@ -3,6 +3,8 @@ from celery.task import task
 from aspc.sagelist.models import BookSale
 from aspc.college.models import Term
 
+REMINDER_SUBJECT_TEMPLATE = u"Renew your SageBooks listing for {0} with a single click"
+
 def _site_info():
     return {
         'domain': Site.objects.get_current().domain,
@@ -24,9 +26,7 @@ def send_renew_reminder(booksale_id, template):
     email_context.update(_site_info())
     
     booksale.seller.email_user(
-        u"Renew your SageBooks listing for {0} with a single click".format(
-            booksale.title,
-        ),
+        REMINDER_SUBJECT_TEMPLATE.format(booksale.title),
         render_to_string(template, email_context)
     )
     logger.info("Successfully sent reminder email to {0} [{1}]".format(
@@ -35,8 +35,7 @@ def send_renew_reminder(booksale_id, template):
 @task
 def dispatch_reminder_emails():
     logger = dispatch_reminder_emails.get_logger()
-    expiring = BookSale.objects.filter(expired=False, buyer__isnull=True,
-        last_renewed__lt=Term.objects.last_active_term().end)
+    expiring = BookSale.objects.expiring()
     logger.info("Sending reminders for {0} sales...".format(expiring.count()))
     
     # Spawn reminder email tasks
@@ -47,8 +46,7 @@ def dispatch_reminder_emails():
 @task
 def dispatch_followup_emails():
     logger = dispatch_followup_emails.get_logger()
-    expiring = BookSale.objects.filter(expired=False, buyer__isnull=True,
-        last_renewed__lt=Term.objects.last_active_term().end)
+    expiring = BookSale.objects.expiring()
     logger.info("Sending reminders for {0} booksales...".format(expiring.count()))
     
     # Spawn reminder email tasks
