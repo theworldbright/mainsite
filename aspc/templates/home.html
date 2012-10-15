@@ -2,12 +2,164 @@
 {% load url from future %}
 
 {% block "content_postnav" %}
-<section class="group primary news">
-  <h1>Senate News</h1>
-  {% if posts %}
-  {% include "blog/posts_fragment.html" %}
-  {% else %}
-  <p>No recent posts to display</p>
-  {% endif %}
+<section class="primary">
+  <div class="news group" id="homepage-news">
+    <!-- <h1>ASPC News</h1> -->
+    {% if posts %}
+    {% include "blog/posts_fragment.html" %}
+    {% else %}
+    <p>No recent posts to display</p>
+    {% endif %}
+  </div>
+  <div class="stream">
+    <h1>Campus Feed</h1>
+    <ol>
+      <li class="food">
+        <div class="activity">
+            <p>Some Guy wrote a new review for <a href="">Dr. Grubbs</a> restaurant in Claremont</p>
+            <div class="excerpt">
+              Lorem ipsum dolor sit amet, conectetur adipiscing elit. Mauris semper orci at lectus sollicitudin aliquam. Nam blandit libero vel lorem pharetra et tincidunt nunc ultricies. Quisque vel justo a lorem ornare mollis. Sed ipsum neque, tempor et imperdiet porta, luctus ac sapien. Nunc vel elit est, id rhoncus ante.
+            </div>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">Restaurant Reviews</a></li>
+            <li><a href="">read the rest</a></li>
+          </ul>
+          <time datetime="">about an hour ago</time>
+        </div>
+      </li>
+      <li class="housing">
+        <div class="activity">
+          <p>A new review of <a href="">Harwood 198</a> has been posted</p>
+          <div class="excerpt">
+            Donec ultricies ligula quis velit dictum id mollis velit interdum. Morbi adipiscing justo et nisi bibendum pulvinar. Duis non suscipit risus. Duis quis massa vitae mauris mattis fringilla. Cras pretium, diam ac porta ultricies, nunc nulla consectetur elit, nec lacinia felis libero ut arcu. Fusce dapibus enim mi, eget convallis eros.
+          </div>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">Housing Reviews</a></li>
+            <li><a href="">read the rest</a></li>
+          </ul>
+          <time datetime="">2 hours ago</time>
+        </div>
+      </li>
+      <li class="tsl">
+        <div class="activity">
+          <p>Some Reporter posted a new article to The Student Life's website</p>
+          <div class="excerpt">
+            <h1>Title of Article Goes Here</h1>
+            <p>Nulla facilisi. Mauris ornare rutrum diam, sit amet venenatis lorem ultricies et. Quisque ultrices pretium ullamcorper. Quisque tristique orci eu leo rhoncus quis pretium nisl gravida. Morbi at lectus vel ipsum elementum rhoncus at nec tortor. Nulla tincidunt placerat lacinia. Quisque sit amet sollicitudin magna. Maecenas faucibus, mi et vestibulum tincidunt, ipsum mauris consequat metus, ut rutrum sapien odio dapibus urna. Sed quis tortor quis dui ornare tincidunt ut vitae tellus. Fusce quis libero magna, et varius velit.</p>
+          </div>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">The Student Life</a></li>
+            <li><a href="">read the rest</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="scc">
+        <div class="activity message">
+          <p>Tickets for the concert are selling out fast! Get yours at Big Bridges box office!</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">Smith Campus Center on Facebook</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="its">
+        <div class="activity message">
+          <p>User email accounts are down until further notice. ITS is aware of the problem and working on a solution.</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">@PomonaHelp on Twitter</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="event">
+        <div class="activity">
+          <p>A new event has been posted: Those Guys in That Band (live!) at 10:00 am on August 8, 2011</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">Calendar</a></li>
+            <li><a href="">see details</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="kspc">
+        <div class="activity message">
+          <p>Kenny Ray's giving away a pair of tix to see Candy Claws, RACES &amp; Moses Campbell on 8/17 @ Echo between 9 &amp; 10am Thurs. 88.7FM or kspc.org!</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">@KSPC on Twitter</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="pomonaartmuseum">
+        <div class="activity message">
+          <p>The Museum is offering 3 internships for Fall Semester 2011! Check out available internships by visiting the our website http://ow.ly/63zRt</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">@PomonaArtMuseum on Twitter</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="courses">
+        <div class="activity">
+          <p>A new review of ASTR51 &ndash; Advanced Introductory Astronomy has been posted</p>
+        </div>
+        <div class="related">
+          <ul>
+            <li><a href="" class="source">Course Reviews</a></li>
+            <li><a href="">read the rest</a></li>
+          </ul>
+          <time datetime="">yesterday</time>
+        </div>
+      </li>
+      <li class="blog">
+        <div class="activity post">
+          <h2>Senate Blog Post Title</h2>
+          <h3>Title in News Update</h3>
+          <img src="http://placehold.it/245x160" title="Placeholder Image" alt="Placeholder Image">
+          <p>This is what blog posts will look like. They will be in the activity stream, or optionally pinned to the top of it for visibility (i.e. so that a rash of restaurant reviews doesn’t displace the election results overnight). There could also optionally be gutter icons in the blue area to the left for different senators, should we choose to include posts by individual senators on the homepage.</p>
+          <h3>To denote subsection</h3>
+          <p>Maecenas gravida hendrerit tempor. <strong>Integer elit nisl, bibendum non dictum in, dictum quis quam.</strong> Nam vel fringilla eros. Sed sed felis vestibulum risus ullamcorper pharetra. Ut adipiscing aliquet magna faucibus pulvinar. Cras dapibus, justo vel luctus gravida, sapien sapien bibendum leo, <em>vitae pharetra odio purus vitae mi</em>. Nulla et tellus sem. Aenean hendrerit suscipit augue, et pretium ligula dapibus ac. Curabitur luctus, orci ut tincidunt auctor, nisl purus tempor arcu, sed pulvinar arcu nibh sed est. Cras nec magna elit, tempus cursus arcu. Nam quis est tellus. Vestibulum ut leo at odio tempus ultrices pellentesque eget nisi. Nulla felis diam, consectetur ut rutrum eget, porta eget eros. In neque nisi, tempor eu sollicitudin ac, aliquam eget eros. Curabitur auctor, dolor rhoncus consectetur egestas, magna dolor faucibus erat, adipiscing adipiscing lorem dolor non nunc</p>
+
+          <h4>Table of stats</h4>
+          <table>
+            <tr><th>Player A</th><th>Player B</th><th>Total Widgets</th></tr>
+            <tr><td>153</td><td>483</td><td>approx. 15</td></tr>
+            <tr><td>546</td><td>126</td><td>73</td></tr>
+            <tr><td>473</td><td>375</td><td>100</td></tr>
+          </table>
+          <h4>Lists Test</h4>
+          <ol>
+            <li>First</li>
+            <li>Second</li>
+            <li>Third</li>
+          </ol>
+          <ul>
+            <li>Item A</li>
+            <li>Item B</li>
+            <li>Item C</li>
+          </ul>
+          <h3>Another Blog Subheading</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vitae nibh a sem adipiscing facilisis. Pellentesque mattis, risus sit amet dictum hendrerit, nulla sapien hendrerit odio, eget sagittis justo sapien eget quam. Mauris tristique, metus ac varius elementum, neque est ornare sem, a ornare nisi neque sed erat. Mauris commodo, lorem id iaculis mattis, massa libero mollis arcu, sagittis tincidunt massa est quis lacus. In hac habitasse platea dictumst. Proin nec eleifend odio. Nulla a metus ut nunc consequat tincidunt. Vivamus vel pulvinar sem. In vehicula, lorem in suscipit congue, risus felis ornare lacus, vitae consequat mauris ipsum vitae nisl. Suspendisse mi tortor, ultricies vitae commodo ut, dignissim sit amet dolor. Ut semper ligula a turpis interdum id vulputate arcu convallis. Sed sem purus, bibendum quis pulvinar eu, bibendum ut nisi. Phasellus sit amet aliquam sapien. Fusce at felis non dui dictum pharetra. Donec venenatis congue interdum. Phasellus eget metus quis eros fringilla laoreet. Donec feugiat diam et felis placerat laoreet aliquam diam sagittis. Sed eleifend posuere libero, molestie tempor ante tristique nec. Suspendisse vel semper orci.
+          </p>
+        </div>
+      </li>    </ol>
+  </div>
 </section>
 {% endblock %}
