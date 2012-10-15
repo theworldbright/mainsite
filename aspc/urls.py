@@ -13,11 +13,17 @@ from filebrowser.sites import site
 # home_kwargs.update({'template_name': 'home.html'})
 
 urlpatterns = patterns('',
+    # Homepage
     url(r'^$', HomeView.as_view(), name="home"),
+    
+    # Internals
     url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
+    url(r'^activity/', include('actstream.urls')),
+    
+    # ASPC Mainsite
     url(r'^news/', include('aspc.blog.urls')),
     url(r'^eatshop/', include('aspc.eatshop.urls')),
     url(r'^senate/meetings-and-minutes/', include('aspc.minutes.urls')),

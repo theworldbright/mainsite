@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'aspc.coursesearch',
     'aspc.minutes',
     'aspc.eatshop',
+    'actstream', # Must be after any apps that generate activities
 )
 
 # A sample logging configuration. The only tangible logging
@@ -269,3 +270,12 @@ djcelery.setup_loader()
 
 GRAPPELLI_INDEX_DASHBOARD = 'aspc.dashboard.CustomIndexDashboard'
 GRAPPELLI_ADMIN_TITLE = 'Associated Students of Pomona College'
+
+#### Activity Stream (django-activity-stream)
+ACTSTREAM_SETTINGS = {
+    'MODELS': ('auth.User', 'housing.Room', 'housing.Review'),
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': True,
+    'GFK_FETCH_DEPTH': 1,
+}
