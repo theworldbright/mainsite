@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.humanize.templatetags.humanize import ordinal
+from actstream import action
 from aspc.college.models import Term, Location, Building, Floor, RoomLocation
 
 class Suite(models.Model):
@@ -212,6 +213,11 @@ class Review(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        print 'foo?'
         return ('housing_browse_room', [], {'building': self.room.floor.building.shortname, 'floor': self.room.floor.number, 'room': self.room.number})
+    
+    @classmethod
+    def send_created_action(sender, instance, created, *args, **kwargs):
+        if created:
+            action.send(instance, verb='was posted')
 
+post_save.connect(Review.send_created_action, sender=Review)
