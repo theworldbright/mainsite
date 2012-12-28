@@ -30,6 +30,62 @@ def _gen_termspecs(config=settings.ACADEMIC_TERM_DEFAULTS):
     return termspecs
 
 class TermManager(models.Manager):
+    def current_term(self):
+        """
+        Retrieve (or create if missing) the current academic term (n.b. this 
+        could be the most recently concluded term based on the way terms are
+        matched)
+        """
+        
+        termspecs = _gen_termspecs()
+        termspecs.reverse() # we want the furthest future dates first
+        
+        today = date.today()
+        
+        for begin, end, name in termspecs:
+            if begin <= today:
+                current_begin, current_end = begin, end
+                break
+        
+        try:
+            current_term = self.get_query_set().get(
+                start__gte=current_begin,
+                end__lte=current_end
+            )
+        except self.model.DoesNotExist:
+            current_term = self.model(start=current_begin, end=current_end)
+            current_term.save()
+        
+        return current_term
+    
+    def next_term(self):
+        """ Retrieve (or create if missing) the next academic term """
+        
+        current = self.current_term()
+        future = self.get_query_set()\
+                     .order_by('start')\
+                     .filter(start__gte=current.end)
+        
+        if future.count():
+            # Next term exists, hooray
+            return future[0]
+        
+        # No next term, must generate it
+        termspecs = _gen_termspecs()
+        
+        for begin, end, name in termspecs:
+            if begin >= current.end:
+                next_begin, next_end = begin, end
+                break
+        
+        # Create a new term with the begin/end we got
+        
+        next_term = self.model(start=next_begin, end=next_end)
+        next_term.save()
+        
+        return next_term
+
+class TermManager(models.Manager):
     def previous_term(self):
         """
         Retrieve (or create if missing) the previous academic term

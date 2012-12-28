@@ -8,7 +8,8 @@ CAMPUSES = ((1, u'PO'), (2, u'SC'), (3, u'CMC'), (4, u'HM'), (5, u'PZ'), (6, u'C
 CAMPUSES_FULL_NAMES = {1: 'Pomona', 2: 'Scripps', 3: 'Claremont-McKenna', 4: 'Harvey Mudd', 5: 'Pitzer'}
 CAMPUSES_LOOKUP = dict([(a[1], a[0]) for a in CAMPUSES])
 CAMPUSES_LOOKUP['CM'] = CAMPUSES_LOOKUP['CMC']
-START_DATE = date(2012, 9, 3)
+START_DATE = date(2013, 1, 22)
+END_DATE = date(2013, 5, 8)
 
 class RefreshHistory(models.Model):
     FULL = 0
@@ -66,7 +67,7 @@ class RequirementArea(models.Model):
 class Course(models.Model):
     code = models.CharField(max_length=20, unique=True, db_index=True)
     code_slug = models.CharField(max_length=20, unique=True, db_index=True)
-    cx_code = models.CharField(max_length=34, unique=True,
+    cx_code = models.CharField(max_length=50, unique=True,
                                db_index=True, editable=False)
     number = models.IntegerField(default=0)
     
@@ -104,22 +105,13 @@ class Course(models.Model):
     def json(self):
         event_list = []
         for mtg in self.meeting_set.all():
-            combine_dates = []
-            if mtg.monday:
-                combine_dates.append((START_DATE, mtg.id))
-            if mtg.tuesday:
-                combine_dates.append((START_DATE + timedelta(days=1), mtg.id))
-            if mtg.wednesday:
-                combine_dates.append((START_DATE + timedelta(days=2), mtg.id))
-            if mtg.thursday:
-                combine_dates.append((START_DATE + timedelta(days=3), mtg.id))
-            if mtg.friday:
-                combine_dates.append((START_DATE + timedelta(days=4), mtg.id))
-            for cd, mtg_id in combine_dates:
-                begin = datetime.combine(cd, mtg.begin)
-                end = datetime.combine(cd, mtg.end)
-                if end > begin: # Sanity check for malformed meetings in CX
-                    event_list.append({'id': '%s-%s-%s' % (self.code, mtg_id, cd.strftime('%w')), 'start': begin, 'end': end, 'title': self.code,})
+            for begin, end in mtg.to_datetime_ranges():
+                event_list.append({
+                    'id': '%s-%s-%s' % (self.code, mtg.id, begin.strftime('%w')),
+                    'start': begin,
+                    'end': end,
+                    'title': self.code,
+                })
         
         return {'events': event_list, 'info': {'course_code': self.code, 'course_code_slug': self.code_slug, 'detail_url': self.get_absolute_url(), 'campus_code': self.get_campus(),}}
         
@@ -151,6 +143,55 @@ class Meeting(models.Model):
         if self.thursday: s.append('R')
         if self.friday: s.append('F')
         return s
+    
+    def to_datetime_ranges(self, base_date=None):
+        ranges = []
+        combine_dates = []
+        
+        # Historical note: the frontend calendar supports navigating week
+        # by week, but we've turned it into a stripped down week calendar.
+        #
+        # Under the hood, it still wants a timestamp for events, though it 
+        # doesn't matter what as long as the day of the week works correctly.
+        frontend_calendar_start = date(2012, 9, 3)
+        
+        # Note: the version of JQuery-WeekCalendar we have gets off by two on 
+        # computing day-of-week starting in 2013. Rather than fix this, since
+        # we don't use the rest of its features, we froze it in the past.
+        
+        if not base_date:
+            base_date = frontend_calendar_start
+        
+        if self.monday:
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 0 - base_date.weekday()) % 7 # get correct weekday 
+                                                     # offset depending on
+                                                     # start date weekday
+            ))
+        if self.tuesday:
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 1 - base_date.weekday()) % 7
+            ))
+        if self.wednesday:                                     
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 2 - base_date.weekday()) % 7
+            ))
+        if self.thursday:                                      
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 3 - base_date.weekday()) % 7
+            ))
+        if self.friday:                                        
+            combine_dates.append(base_date +  + timedelta(
+                days=(7 + 4 - base_date.weekday()) % 7
+            ))
+        
+        for basedate in combine_dates:
+            begin = datetime.combine(basedate, self.begin)
+            end = datetime.combine(basedate, self.end)
+            if end > begin: # Sanity check for malformed meetings in CX
+                ranges.append((begin, end))
+        
+        return ranges
     
     def get_campus(self):
         return CAMPUSES[self.campus - 1][1] # CAMPUSES is now 1-based

@@ -1,6 +1,7 @@
 /* @override 
 	http://localhost:8000/static/css/styles.css
 	http://127.0.0.1:8000/static/css/styles.css
+	http://aspc.pomona.edu/static/css/styles.css
 */
 
 /* @group Base */
@@ -109,6 +110,82 @@ form > ul > li > label {
 /* @end */
 
 /* @group Desktop */
+
+/* @group Document Archive */
+
+.primary.docarchive .content ol {
+	list-style-type: none;
+	padding: 0;
+}
+
+.docarchive ol li h2 {
+	margin-bottom: 0;
+}
+
+.primary.docarchive .content ol li h3 {
+	font-size: 0.9em;
+	margin: 0.25em 0;
+	font-weight: normal;
+	color: #444;
+}
+
+.primary.docarchive p.paginator {
+	text-align: center;
+}
+
+/* @end */
+
+/* @group Positions */
+
+.primary.positions .content ol {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.primary.positions .position > hgroup {
+	padding-bottom: 0.25em;
+	border-bottom: 1px dotted #8c8c8c;
+}
+
+.primary.positions .position > hgroup h2 {
+	margin: 0.25em 0;
+}
+
+.primary.positions .position .email {
+	margin-top: 0;
+	font-weight: normal;
+	font-style: italic;
+	margin-bottom: 0.25em;
+}
+
+/* @end */
+
+/* @group Senators */
+
+.primary.senators .content ol {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.primary.senators .senator > hgroup {
+	padding-bottom: 0.25em;
+	border-bottom: 1px dotted #8c8c8c;
+}
+
+.primary.senators .senator > hgroup h2 {
+	margin: 0.25em 0;
+}
+
+.primary.senators .senator .email {
+	margin-top: 0;
+	font-weight: normal;
+	font-style: italic;
+	margin-bottom: 0.25em;
+}
+
+/* @end */
+
+
 
 /* @group SageList */
 
