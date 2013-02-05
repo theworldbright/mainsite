@@ -1,5 +1,12 @@
 # django imports
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+# generic view imports
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, DeleteView
 
 # package imports
 from .models import Listing
