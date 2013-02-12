@@ -1,0 +1,18 @@
+{% extends "listings/base.html" %}
+{% block "subtitle" %}&mdash; Post a new ad{% endblock %}
+{% block "page_title" %}Post a New Ad{% endblock %}
+{% block "sagelist_breadcrumbs" %}
+  <li>Sell a Book</li>
+{% endblock %}
+{% block "content" %}
+<form action="." method="POST">
+  {% csrf_token %}
+  <ul>
+      {{ form.as_ul }}
+  </ul>
+  <p><strong>Note:</strong> by listing your book on SageBooks, you are agreeing
+    to sell it to the person who clicks "buy" on your listing page. If you sell
+    the book outside SageBooks, you must come back and delete your listing!</p>
+  <p><input type="submit" value="Post new listing" id="post"></p>
+</form>
+{% endblock %}

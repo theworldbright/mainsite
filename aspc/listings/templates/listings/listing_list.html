@@ -1,0 +1,17 @@
+{% extends "listings/base.html" %}
+{% load url from future %}
+
+{% block "title" %} Ads {% endblock %}
+{% block "full_content" %}
+
+<table>
+{% for listing in listing_list %}
+<tr>
+    <td><a href="{% url "detailed_listing" pk=listing.id %}"> {{ listing.title }} </a></td>
+</tr>
+{% empty %}
+No ads to display!
+{% endfor %}
+</table>
+
+{% endblock %}
