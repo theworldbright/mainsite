@@ -26,8 +26,8 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('aspc.auth.urls')),
     url(r'^housing/', include('aspc.housing.urls')),
     url(r'^courses/', include('aspc.coursesearch.urls')),
-    url(r'(?P<slug_path>(?:[\w\-\d]+/)+)$', 'aspc.folio.views.page_view', name="folio_page"),
     url(r'^listings/', include('aspc.listings.urls')),
+    url(r'(?P<slug_path>(?:[\w\-\d]+/)+)$', 'aspc.folio.views.page_view', name="folio_page"),
 )
 
 if settings.DEBUG:

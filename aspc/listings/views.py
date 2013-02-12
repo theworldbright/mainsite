@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 # generic view imports
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 # package imports
 from .models import Listing
@@ -19,7 +19,7 @@ class ListingForm(forms.ModelForm):
 class ListingSearchForm(forms.Form):
     search = forms.CharField(initial='Search')
 
-class CreateListingView(CreateView):
+class ListingCreateView(CreateView):
     form_class = ListingForm
     model = Listing
 
@@ -31,12 +31,15 @@ class CreateListingView(CreateView):
 
         messages.add_message(
                 self.request,
-                messages.SUCESS,
-                u"Succesfully listed {)} for sale".format(ad.title))
+                messages.SUCCESS,
+                u"Succesfully listed {0} for sale".format(ad.title))
 
         return super(CreateListingView, self).form_valid(form)
 
 class ListingDetailView(DetailView):
+    model = Listing
+
+class ListingEditView(UpdateView):
     model = Listing
 
 class ListingDeleteView(DeleteView):
@@ -44,3 +47,4 @@ class ListingDeleteView(DeleteView):
 
 class ListingsView(ListView):
     model = Listing
+

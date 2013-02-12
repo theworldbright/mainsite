@@ -8,7 +8,7 @@ class Listing(models.Model):
     # contact = models.CharField(max_length=30)
     price = models.CharField(max_length=6)
     content = models.TextField()
-    image = models.ImageField(upload_to='listings_pics')
+    image = models.ImageField(upload_to='listings_pics', blank=True, null=True)
 
     seller = models.ForeignKey(User, related_name="item_sales_set")
     # buyer = models.ForeignKey(User, null=True, blank=True, related_name="item_purchases_set")
