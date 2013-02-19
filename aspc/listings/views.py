@@ -1,5 +1,6 @@
 # django imports
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -15,6 +16,11 @@ class ListingForm(forms.ModelForm):
     class Meta:
         model = Listing
         exclude = ('seller', 'posted', 'sold')
+
+class ListingEditForm(forms.ModelForm):
+    class Meta:
+        model = Listing
+        exclude = ('seller', 'sold')
 
 class ListingSearchForm(forms.Form):
     search = forms.CharField(initial='Search')
@@ -34,12 +40,13 @@ class ListingCreateView(CreateView):
                 messages.SUCCESS,
                 u"Succesfully listed {0} for sale".format(ad.title))
 
-        return super(CreateListingView, self).form_valid(form)
+        return super(ListingCreateView, self).form_valid(form)
 
 class ListingDetailView(DetailView):
     model = Listing
 
 class ListingEditView(UpdateView):
+    form_class = ListingEditForm
     model = Listing
 
 class ListingDeleteView(DeleteView):

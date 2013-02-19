@@ -1,0 +1,16 @@
+{% extends "listings/base.html" %}
+{% block "content" %}
+<div class="title"><h2>{{ listing.title }} - {{ listing.price }}</h2></div><br />
+<div class="date"><p>Posted on {{ listing.posted }}</p></div><br />
+<div class="content">
+    {{ listing.content }}
+</div>
+<br />
+<div class="image">
+    {{ listing.image }}
+</div>
+<br />
+<div class="nav">
+    <a href="../">Go back to listings</a> - <a href="./edit">Edit listing</a>
+</div>
+{% endblock %}

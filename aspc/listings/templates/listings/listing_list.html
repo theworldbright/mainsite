@@ -4,10 +4,12 @@
 {% block "title" %} Ads {% endblock %}
 {% block "full_content" %}
 
+<div class="title"><h1>Listings</h1></div>
+
 <table>
 {% for listing in listing_list %}
 <tr>
-    <td><a href="{% url "detailed_listing" pk=listing.id %}"> {{ listing.title }} </a></td>
+    <td><a href="{% url "detailed_listing" pk=listing.id %}"> {{ listing.title }} - {{ listing.price }}</a></td>
 </tr>
 {% empty %}
 No ads to display!
