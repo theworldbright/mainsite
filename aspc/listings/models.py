@@ -6,7 +6,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=120)
     # author = models.CharField(max_length=30)
     # contact = models.CharField(max_length=30)
-    price = models.CharField(max_length=6)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
     content = models.TextField()
     image = models.ImageField(upload_to='listings_pics', blank=True, null=True)
 

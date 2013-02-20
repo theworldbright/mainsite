@@ -1,6 +1,9 @@
 {% extends "listings/base.html" %}
 {% block "content" %}
-<div class="title"><h2>{{ listing.title }} - {{ listing.price }}</h2></div><br />
+<div class="title"><h2>{{ listing.title }} -
+        {% if listing.price == 0 %} Free
+        {% else %} ${{ listing.price }}
+        {% endif %} </h2></div><br />
 <div class="date"><p>Posted on {{ listing.posted }}</p></div><br />
 <div class="content">
     {{ listing.content }}
@@ -11,6 +14,22 @@
 </div>
 <br />
 <div class="nav">
-    <a href="../">Go back to listings</a> - <a href="./edit">Edit listing</a>
+    <a href="../">Go back to listings</a>
 </div>
+{% if user == listing.seller %}
+<div class="modify">
+    <a href="./edit">Edit listing</a> - <a href="./delete"> Delete listing </a>
+</div>
+{% elif user.is_authenticated %}
+<form action="." method="POST">
+    {% csrf_token %}
+    <h4>Interested? Send a message to the seller</h4>
+    <em>Subject:</em> {{ form.subject }}
+    <br>
+    <em>Message:</em>
+    <br>
+    {{ form.message }}
+    <input type="submit" value="Contact seller" id="post" />
+</form>
+{% endif %}
 {% endblock %}

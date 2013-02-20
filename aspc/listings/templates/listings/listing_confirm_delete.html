@@ -1,0 +1,10 @@
+{% extends "listings/base.html" %}
+{% load url from future %}
+
+{% block "content" %}
+<p>Are you sure you want to delete the listing "{{ listing.title }}"</p>
+<form method="POST" action="{% url "delete_listing" pk=listing.id %}">
+    {% csrf_token %}
+    <p><input type="submit" value="Delete" id="delete" /></p>
+</form>
+{% endblock %}
