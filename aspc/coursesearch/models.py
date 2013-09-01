@@ -4,12 +4,17 @@ from datetime import date, time, datetime, timedelta
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
-CAMPUSES = ((1, u'PO'), (2, u'SC'), (3, u'CMC'), (4, u'HM'), (5, u'PZ'), (6, u'CGU'), (7, u'CU'), (-1, u'?'))
+CAMPUSES = ((1, u'PO'), (2, u'SC'), (3, u'CMC'), (4, u'HM'), (5, u'PZ'), (6, u'CGU'), (7, u'CU'), (8, u'KS'), (-1, u'?'))
 CAMPUSES_FULL_NAMES = {1: 'Pomona', 2: 'Scripps', 3: 'Claremont-McKenna', 4: 'Harvey Mudd', 5: 'Pitzer'}
 CAMPUSES_LOOKUP = dict([(a[1], a[0]) for a in CAMPUSES])
+
+# Some campuses are represented more than one way so we make aliases
 CAMPUSES_LOOKUP['CM'] = CAMPUSES_LOOKUP['CMC']
-START_DATE = date(2012, 9, 3)
-END_DATE = date(2012, 12, 12)
+CAMPUSES_LOOKUP['CUC'] = CAMPUSES_LOOKUP['CU']
+CAMPUSES_LOOKUP['CG'] = CAMPUSES_LOOKUP['CGU']
+
+START_DATE = date(2013, 9, 3)
+END_DATE = date(2013, 12, 11)
 
 class RefreshHistory(models.Model):
     FULL = 0
@@ -49,7 +54,7 @@ class Department(models.Model):
 class RequirementArea(models.Model):
     code = models.CharField(max_length=20, unique=True, db_index=True)
     name = models.CharField(max_length=100)
-    campus = models.PositiveSmallIntegerField(choices=CAMPUSES)
+    campus = models.SmallIntegerField(choices=CAMPUSES)
 
     def course_count(self):
         return len(self.course_set.all())
@@ -67,7 +72,7 @@ class RequirementArea(models.Model):
 class Course(models.Model):
     code = models.CharField(max_length=20, unique=True, db_index=True)
     code_slug = models.CharField(max_length=20, unique=True, db_index=True)
-    cx_code = models.CharField(max_length=34, unique=True,
+    cx_code = models.CharField(max_length=50, unique=True,
                                db_index=True, editable=False)
     number = models.IntegerField(default=0)
     
@@ -132,7 +137,7 @@ class Meeting(models.Model):
     friday = models.BooleanField()
     begin = models.TimeField()
     end = models.TimeField()
-    campus = models.PositiveSmallIntegerField(choices=CAMPUSES)
+    campus = models.SmallIntegerField(choices=CAMPUSES)
     location = models.CharField(max_length=100)
     
     def gen_days(self):
@@ -144,20 +149,46 @@ class Meeting(models.Model):
         if self.friday: s.append('F')
         return s
     
-    def to_datetime_ranges(self):
+    def to_datetime_ranges(self, base_date=None):
         ranges = []
         combine_dates = []
         
+        # Historical note: the frontend calendar supports navigating week
+        # by week, but we've turned it into a stripped down week calendar.
+        #
+        # Under the hood, it still wants a timestamp for events, though it 
+        # doesn't matter what as long as the day of the week works correctly.
+        frontend_calendar_start = date(2012, 9, 3)
+        
+        # Note: the version of JQuery-WeekCalendar we have gets off by two on 
+        # computing day-of-week starting in 2013. Rather than fix this, since
+        # we don't use the rest of its features, we froze it in the past.
+        
+        if not base_date:
+            base_date = frontend_calendar_start
+        
         if self.monday:
-            combine_dates.append(START_DATE)
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 0 - base_date.weekday()) % 7 # get correct weekday 
+                                                     # offset depending on
+                                                     # start date weekday
+            ))
         if self.tuesday:
-            combine_dates.append(START_DATE + timedelta(days=1))
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 1 - base_date.weekday()) % 7
+            ))
         if self.wednesday:                                     
-            combine_dates.append(START_DATE + timedelta(days=2))
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 2 - base_date.weekday()) % 7
+            ))
         if self.thursday:                                      
-            combine_dates.append(START_DATE + timedelta(days=3))
+            combine_dates.append(base_date + timedelta(
+                days=(7 + 3 - base_date.weekday()) % 7
+            ))
         if self.friday:                                        
-            combine_dates.append(START_DATE + timedelta(days=4))
+            combine_dates.append(base_date +  + timedelta(
+                days=(7 + 4 - base_date.weekday()) % 7
+            ))
         
         for basedate in combine_dates:
             begin = datetime.combine(basedate, self.begin)
