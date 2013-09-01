@@ -7,3 +7,8 @@ temp/
 fabfile/config.py
 aspc/celerybeat-schedule
 media/
+.vagrant/
+vagrant/ssh_config
+vagrant/peninsula.key
+vagrant/run/
+static/

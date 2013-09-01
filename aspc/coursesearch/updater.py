@@ -1,4 +1,6 @@
-import logging, re
+import logging
+import re
+import code
 from pprint import pformat
 from datetime import datetime, time
 import pyodbc
@@ -186,18 +188,20 @@ def refresh_meetings(cursor, course):
         end = time(end_h, end_m)
         
         # Get campus
-        
-        campus_code = mtg.Campus.split(' ')[0]
-        if not campus_code in CAMPUSES_LOOKUP.keys():
-            campus = CAMPUSES_LOOKUP['?']
-        else:
+        try:
+            campus_code = mtg.Campus.split(' ')[0]
             campus = CAMPUSES_LOOKUP[campus_code]
+        except Exception:
+            campus = CAMPUSES_LOOKUP['?']
         
         # Get location
         
         if mtg.Room and mtg.Building:
             room_number = ROOM_REGEX.findall(mtg.MeetTime)[0]
             location = "{0}, {1}".format(mtg.Building, room_number)
+            # special case for Keck building / CU campus
+            if mtg.Building == u'Keck Science Center':
+                campus = CAMPUSES_LOOKUP['KS']
         else:
             location = ''
         
@@ -213,8 +217,10 @@ def refresh_meetings(cursor, course):
             campus=campus,
             location=location
         )
-        
-        meeting.save()
+        try:
+            meeting.save()
+        except Exception:
+            code.interact(local=locals())
 
 def _sanitize(chardata):
     if not chardata:
@@ -238,6 +244,7 @@ def refresh_one_course(cursor, course):
     course.number = int(course_row.Number)
     course.spots = int(course_row.SeatsTotal)
     course.filled = int(course_row.SeatsFilled)
+    course.primary_association = CAMPUSES_LOOKUP.get(course_row.PrimaryAssociation, -1)
     
     course.save()
     
@@ -275,7 +282,7 @@ def refresh_one_course(cursor, course):
     try:
         course.primary_department = Department.objects.get(code=course_row.Department)
     except Department.DoesNotExist:
-        logger.warning("Tried to create a course record for {0} in the {1}"
+        logger.warning("Tried to create a course record for {0} in the {1} "
             "department, but {1} did not exist. Skipping.".format(
                 course.cx_code, course_row.Department))
         course.delete()
