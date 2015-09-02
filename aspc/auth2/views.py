@@ -5,6 +5,7 @@ from aspc import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
+import re
 
 __all__ = ['guest_login', 'login', 'logout']
 PHP_AUTH_URL = 'https://aspc.pomona.edu/php-auth'
@@ -68,7 +69,7 @@ def login(request, next_page=None):
 				# Ticket successfully validated and user data retrieved - perform login
 				auth.login(request, user)
 
-				if "course-review" in next_page and user.email:
+				if "course-review" in next_page and user.email and re.match(".*4747@.*pomona\.edu", user.email):
 					next_page = ""
 				# Redirect to a PHP script to complete PHP session login on that side
 				# Afterwards, the PHP script will redirect to the ASPC index page or next_page if set
