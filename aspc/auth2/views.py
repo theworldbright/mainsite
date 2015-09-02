@@ -68,8 +68,8 @@ def login(request, next_page=None):
 				# Ticket successfully validated and user data retrieved - perform login
 				auth.login(request, user)
 
-				if "course-review" in next_page:
-					return "inside if"
+				if "course-review" in next_page and user.email:
+					next_page = ""
 				# Redirect to a PHP script to complete PHP session login on that side
 				# Afterwards, the PHP script will redirect to the ASPC index page or next_page if set
 				return HttpResponseRedirect(PHP_AUTH_URL + '/login.php?redirect=' + quote_plus(next_page))
