@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count
-from aspc.courses.models import (Section, Department, Schedule, RefreshHistory, START_DATE, END_DATE, Term)
+from aspc.courses.models import (Section, Department, Schedule, RefreshHistory, START_DATE, END_DATE, Term, Course)
 from aspc.courses.forms import SearchForm, ICalExportForm
 import json
 import datetime
@@ -307,17 +307,37 @@ class DepartmentCoursesView(generic.DetailView):
     slug_field = 'code'
     template_name = "browse/department_detail.html"
 
-class CourseDetailView(generic.DetailView):
+class SectionDetailView(generic.DetailView):
     model = Section
     slug_field = 'code_slug'
     slug_url_kwarg = 'course_code'
-    template_name = "browse/section_detail.html"
+    template_name = "browse/section_or_course_detail.html"
 
     def get_queryset(self):
         dept = get_object_or_404(Department, code=self.kwargs['dept'])
         return Section.objects.filter(course__primary_department=dept)
     def get_object(self):
         try:
-            return Section.objects.filter(code_slug=self.kwargs['course_code'])[0]
+            return Section.objects.get(code_slug=self.kwargs['course_code']) # "course" code here is actually section code
+        except IndexError:
+            raise Http404
+    def get_context_data(self, **kwargs):
+        context = super(SectionDetailView, self).get_context_data(**kwargs)
+        context['is_section'] = True
+        return context
+
+class CourseDetailView(generic.DetailView):
+    model = Section
+    slug_field = 'code_slug'
+    slug_url_kwarg = 'course_code'
+    template_name = "browse/section_or_course_detail.html"
+
+    def get_queryset(self):
+        dept = get_object_or_404(Department, code=self.kwargs['dept'])
+        return Section.objects.filter(course__primary_department=dept)
+    def get_object(self):
+        try:
+            course = Course.objects.get(code_slug=self.kwargs['course_code'])
+            return course.sections.all()[0]
         except IndexError:
             raise Http404
