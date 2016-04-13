@@ -347,8 +347,9 @@ class CourseDetailView(generic.DetailView):
         return context
 
 class ReviewForm(Form):
-    overall_rating = forms.IntegerField(max_value=5)
-    work_per_week = forms.IntegerField(max_value=5)
+    CHOICES = [(i,i) for i in range(1,6)]
+    overall_rating = forms.ChoiceField(choices=CHOICES)
+    work_per_week = forms.IntegerField(max_value=20)
     comments = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, course_code, *args, **kwargs):
@@ -373,7 +374,7 @@ class ReviewView(View):
             work_per_week = form.cleaned_data["work_per_week"]
             comments = form.cleaned_data["comments"]
             review, created = CourseReview.objects.get_or_create(author=request.user, course=form.course, instructor=instructor)
-            review.overall_rating = overall_rating
+            review.overall_rating = int(overall_rating)
             review.work_per_week = work_per_week
             review.comments = comments
             review.save()
